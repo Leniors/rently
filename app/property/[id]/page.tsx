@@ -54,7 +54,9 @@ const PropertyDetail = () => {
   }, [id]);
 
   const checkAuth = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     setUser(session?.user ?? null);
   };
 
@@ -104,40 +106,31 @@ const PropertyDetail = () => {
   };
 
   const handlePayment = async () => {
-    if (!user) {
-      toast({
-        title: "Sign in required",
-        description: "Please sign in to proceed",
-      });
-      router.push("/auth");
-      return;
-    }
+    if (!user) return;
 
     setLoading(true);
+    const phone = prompt("Enter your M-Pesa number (2547XXXXXXXX):");
 
-    // Simulate payment logic
-    const { error } = await supabase.from("contact_purchases").insert({
-      user_id: user.id,
-      property_id: id,
-      amount: 200.0,
-      payment_status: "completed",
+    const res = await fetch("/api/mpesa/stkpush", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone, amount: 200 }),
     });
 
+    const data = await res.json();
     setLoading(false);
 
-    if (error) {
+    if (data.error) {
       toast({
         variant: "destructive",
         title: "Payment failed",
-        description: error.message,
+        description: data.error,
       });
     } else {
       toast({
-        title: "Payment successful!",
-        description: "You can now view the landlord's contact information",
+        title: "STK Push sent!",
+        description: "Check your phone to complete the payment.",
       });
-      setHasPurchased(true);
-      setShowPaymentDialog(false);
     }
   };
 
@@ -186,23 +179,25 @@ const PropertyDetail = () => {
               {/* Thumbnails */}
               {propertyImages.length > 1 && (
                 <div className="grid grid-cols-4 gap-2">
-                  {propertyImages.map((image: string, index: number): JSX.Element => (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedImageIndex(index)}
-                    className={`relative h-20 rounded-lg overflow-hidden transition-all ${
-                    selectedImageIndex === index
-                      ? "ring-2 ring-primary ring-offset-2"
-                      : "opacity-70 hover:opacity-100"
-                    }`}
-                  >
-                    <img
-                    src={image}
-                    alt={`${property.title} - ${index + 1}`}
-                    className="w-full h-full object-cover"
-                    />
-                  </button>
-                  ))}
+                  {propertyImages.map(
+                    (image: string, index: number): JSX.Element => (
+                      <button
+                        key={index}
+                        onClick={() => setSelectedImageIndex(index)}
+                        className={`relative h-20 rounded-lg overflow-hidden transition-all ${
+                          selectedImageIndex === index
+                            ? "ring-2 ring-primary ring-offset-2"
+                            : "opacity-70 hover:opacity-100"
+                        }`}
+                      >
+                        <img
+                          src={image}
+                          alt={`${property.title} - ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </button>
+                    )
+                  )}
                 </div>
               )}
             </div>
@@ -212,7 +207,9 @@ const PropertyDetail = () => {
               <CardContent className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h1 className="text-3xl font-bold mb-2">{property.title}</h1>
+                    <h1 className="text-3xl font-bold mb-2">
+                      {property.title}
+                    </h1>
                     <div className="flex items-center text-muted-foreground">
                       <MapPin className="h-4 w-4 mr-1" />
                       <span>{property.location}</span>
@@ -286,7 +283,10 @@ const PropertyDetail = () => {
                       <div className="grid grid-cols-2 gap-2">
                         {property.amenities?.map(
                           (amenity: string, index: number) => (
-                            <div key={index} className="flex items-center gap-2">
+                            <div
+                              key={index}
+                              className="flex items-center gap-2"
+                            >
                               <CheckCircle className="h-4 w-4 text-success" />
                               <span>{amenity}</span>
                             </div>
@@ -313,7 +313,9 @@ const PropertyDetail = () => {
                     <div className="flex items-center gap-3">
                       <User1 className="h-5 w-5 text-primary" />
                       <div>
-                        <p className="text-sm text-muted-foreground">Landlord</p>
+                        <p className="text-sm text-muted-foreground">
+                          Landlord
+                        </p>
                         <p className="font-semibold">{landlord?.full_name}</p>
                       </div>
                     </div>
@@ -392,7 +394,10 @@ const PropertyDetail = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowPaymentDialog(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowPaymentDialog(false)}
+            >
               Cancel
             </Button>
             <Button onClick={handlePayment} disabled={loading}>
