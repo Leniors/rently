@@ -389,7 +389,7 @@ const PropertyDetail = () => {
                 <span className="text-xl font-bold">KSh 200</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                One-time payment for this property
+                One-time payment for all properties.
               </p>
             </div>
           </div>
