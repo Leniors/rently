@@ -1,0 +1,176 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 215 25% 15%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 215 25% 15%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 215 25% 15%;
+
+  --primary: 215 75% 25%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 35 90% 55%;
+  --secondary-foreground: 0 0% 100%;
+
+  --muted: 210 30% 96%;
+  --muted-foreground: 215 15% 45%;
+
+  --accent: 180 70% 45%;
+  --accent-foreground: 0 0% 100%;
+
+  --success: 145 65% 45%;
+  --success-foreground: 0 0% 100%;
+
+  --destructive: 0 85% 60%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 214 25% 88%;
+  --input: 214 25% 88%;
+  --ring: 215 75% 25%;
+
+  --radius: 0.75rem;
+
+  /* Custom gradients */
+  --gradient-primary: linear-gradient(
+    135deg,
+    hsl(215, 75%, 25%) 0%,
+    hsl(215, 85%, 35%) 100%
+  );
+  --gradient-secondary: linear-gradient(
+    135deg,
+    hsl(35, 90%, 55%) 0%,
+    hsl(35, 95%, 65%) 100%
+  );
+  --gradient-hero: linear-gradient(
+    135deg,
+    hsl(215, 75%, 25%) 0%,
+    hsl(180, 70%, 45%) 100%
+  );
+
+  /* Custom shadows */
+  --shadow-soft: 0 2px 8px -2px hsl(215 75% 25% / 0.1);
+  --shadow-medium: 0 4px 16px -4px hsl(215 75% 25% / 0.15);
+  --shadow-strong: 0 8px 32px -8px hsl(215 75% 25% / 0.25);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: 215 30% 8%;
+    --foreground: 0 0% 98%;
+
+    --card: 215 25% 12%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 215 25% 12%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 215 75% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 35 90% 60%;
+    --secondary-foreground: 215 30% 8%;
+
+    --muted: 215 20% 18%;
+    --muted-foreground: 215 10% 65%;
+
+    --accent: 180 70% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --success: 145 65% 50%;
+    --success-foreground: 0 0% 100%;
+
+    --destructive: 0 85% 65%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 215 20% 20%;
+    --input: 215 20% 20%;
+    --ring: 215 75% 55%;
+
+    --gradient-primary: linear-gradient(
+      135deg,
+      hsl(215, 75%, 35%) 0%,
+      hsl(215, 85%, 45%) 100%
+    );
+    --gradient-secondary: linear-gradient(
+      135deg,
+      hsl(35, 90%, 60%) 0%,
+      hsl(35, 95%, 70%) 100%
+    );
+    --gradient-hero: linear-gradient(
+      135deg,
+      hsl(215, 75%, 35%) 0%,
+      hsl(180, 70%, 50%) 100%
+    );
+
+    --shadow-soft: 0 2px 8px -2px hsl(0 0% 0% / 0.3);
+    --shadow-medium: 0 4px 16px -4px hsl(0 0% 0% / 0.4);
+    --shadow-strong: 0 8px 32px -8px hsl(0 0% 0% / 0.5);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}
