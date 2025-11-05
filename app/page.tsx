@@ -9,9 +9,12 @@ import { PropertyCard } from "@/components/PropertyCard";
 import { Search, Home, Shield, TrendingUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import heroImage from "@/assets/hero-home.jpg";
+import { Database } from "@/integrations/supabase/types";
+
+type Property = Database["public"]["Tables"]["properties"]["Row"];
 
 export default function HomePage() {
-  const [featuredProperties, setFeaturedProperties] = useState<any[]>([]);
+  const [featuredProperties, setFeaturedProperties] = useState<Property[]>([]);
 
   useEffect(() => {
     fetchFeaturedProperties();
@@ -94,9 +97,23 @@ export default function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredProperties.map((property) => (
-              <PropertyCard key={property.id} property={property} />
-            ))}
+            {featuredProperties.map((property) => {
+              const cardProperty = {
+                id: property.id,
+                title: property.title,
+                description: property.description,
+                property_type: property.property_type,
+                status: property.status,
+                price: property.price,
+                location: property.location,
+                bedrooms: property.bedrooms ?? undefined,
+                bathrooms: property.bathrooms ?? undefined,
+                area_sqft: property.area_sqft ?? undefined,
+                images: property.images ?? [],
+                verified: property.verified ?? false,
+              };
+              return <PropertyCard key={property.id} property={cardProperty} />;
+            })}
           </div>
 
           <div className="text-center mt-12">

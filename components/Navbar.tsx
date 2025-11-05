@@ -7,12 +7,16 @@ import { Home, LogOut, User, Building2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
+import { Database } from "@/integrations/supabase/types";
+import type { User as AuthUser } from "@supabase/supabase-js";
+
+type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
 export function Navbar() {
   const router = useRouter();
   const { toast } = useToast();
-  const [user, setUser] = useState<any>(null);
-  const [profile, setProfile] = useState<any>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
 
   useEffect(() => {
     // Fetch session on load

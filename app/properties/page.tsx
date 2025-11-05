@@ -13,10 +13,13 @@ import {
 } from "@/components/ui/select";
 import { Search, Filter } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client"; // ✅ updated path
+import { Database } from "@/integrations/supabase/types";
+
+type Property = Database["public"]["Tables"]["properties"]["Row"];
 
 export default function PropertiesPage() {
-  const [properties, setProperties] = useState<any[]>([]);
-  const [filteredProperties, setFilteredProperties] = useState<any[]>([]);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [propertyType, setPropertyType] = useState<string>("all");
   const [priceRange, setPriceRange] = useState<string>("all");
@@ -127,7 +130,17 @@ export default function PropertiesPage() {
         {/* Properties Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProperties.map((property) => (
-            <PropertyCard key={property.id} property={property} />
+            <PropertyCard
+              key={property.id}
+              property={{
+                ...property,
+                bedrooms: property.bedrooms ?? undefined,
+                bathrooms: property.bathrooms ?? undefined,
+                area_sqft: property.area_sqft ?? undefined,
+                images: property.images ?? [],
+                verified: property.verified ?? false,
+              }}
+            />
           ))}
         </div>
 

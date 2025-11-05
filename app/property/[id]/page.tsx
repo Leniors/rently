@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { User } from "@supabase/supabase-js";
 import { useParams, useRouter } from "next/navigation";
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
@@ -23,21 +24,23 @@ import {
   CheckCircle,
   Phone,
   Mail,
-  User,
-  Filter,
+  User as User1,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Database } from "@/integrations/supabase/types";
+
+type Property = Database["public"]["Tables"]["properties"]["Row"];
+type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
 const PropertyDetail = () => {
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
-
   const id = params?.id as string;
-  const [property, setProperty] = useState<any>(null);
-  const [landlord, setLandlord] = useState<any>(null);
-  const [user, setUser] = useState<any>(null);
+  const [property, setProperty] = useState<Property | null>(null);
+  const [landlord, setLandlord] = useState<Profile | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [hasPurchased, setHasPurchased] = useState(false);
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -101,6 +104,15 @@ const PropertyDetail = () => {
   };
 
   const handlePayment = async () => {
+    if (!user) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to proceed",
+      });
+      router.push("/auth");
+      return;
+    }
+
     setLoading(true);
 
     // Simulate payment logic
@@ -141,7 +153,7 @@ const PropertyDetail = () => {
   }
 
   const propertyImages =
-    property.images?.length > 0
+    Array.isArray(property.images) && property.images.length > 0
       ? property.images
       : ["https://images.unsplash.com/photo-1568605114967-8130f3a36994"];
 
@@ -266,13 +278,13 @@ const PropertyDetail = () => {
                 </div>
 
                 {/* Amenities */}
-                {property.amenities?.length > 0 && (
+                {(property.amenities?.length ?? 0) > 0 && (
                   <>
                     <Separator className="my-6" />
                     <div>
                       <h2 className="text-xl font-semibold mb-3">Amenities</h2>
                       <div className="grid grid-cols-2 gap-2">
-                        {property.amenities.map(
+                        {property.amenities?.map(
                           (amenity: string, index: number) => (
                             <div key={index} className="flex items-center gap-2">
                               <CheckCircle className="h-4 w-4 text-success" />
@@ -299,7 +311,7 @@ const PropertyDetail = () => {
                 {hasPurchased ? (
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
-                      <User className="h-5 w-5 text-primary" />
+                      <User1 className="h-5 w-5 text-primary" />
                       <div>
                         <p className="text-sm text-muted-foreground">Landlord</p>
                         <p className="font-semibold">{landlord?.full_name}</p>
@@ -323,7 +335,7 @@ const PropertyDetail = () => {
                 ) : (
                   <div className="text-center">
                     <p className="text-muted-foreground mb-4">
-                      Pay KSh 200 to unlock landlord's contact information
+                      Pay KSh 200 to unlock landlord&apos;s contact information
                     </p>
                     <Button onClick={handleContactAccess} className="w-full">
                       Unlock Contact Info
@@ -365,7 +377,7 @@ const PropertyDetail = () => {
           <DialogHeader>
             <DialogTitle>Unlock Contact Information</DialogTitle>
             <DialogDescription>
-              Pay KSh 200 to access the landlord's phone and email address
+              Pay KSh 200 to access the landlord&apos;s phone and email address
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">

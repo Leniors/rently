@@ -40,6 +40,13 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Database } from "@/integrations/supabase/types";
+
+type Property = Database["public"]["Tables"]["properties"]["Row"];
+type Purchase = Database["public"]["Tables"]["contact_purchases"]["Row"] & {
+  properties?: { title?: string } | null;
+  profiles?: { full_name?: string | null } | null;
+};
 
 export default function AdminPage() {
   const router = useRouter();
@@ -52,9 +59,8 @@ export default function AdminPage() {
     pendingVerifications: 0,
   });
 
-  const [properties, setProperties] = useState<any[]>([]);
-  const [users, setUsers] = useState<any[]>([]);
-  const [purchases, setPurchases] = useState<any[]>([]);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [showRejectDialog, setShowRejectDialog] = useState(false);
   const [rejectingPropertyId, setRejectingPropertyId] = useState<string>("");
   const [rejectionReason, setRejectionReason] = useState("");
@@ -102,8 +108,6 @@ export default function AdminPage() {
       .from("profiles")
       .select("*")
       .order("created_at", { ascending: false });
-
-    setUsers(usersData || []);
 
     const { data: purchasesData } = await supabase
       .from("contact_purchases")

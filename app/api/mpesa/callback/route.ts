@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/integrations/supabase/client";
 
+type CallbackItem = { Name?: string; Value?: string | number | null };
+
 export async function POST(req: Request) {
   const body = await req.json();
-
-  const resultCode = body.Body.stkCallback.ResultCode;
+  const resultCode = body?.Body?.stkCallback?.ResultCode ?? body?.Body?.ResultCode;
   const phone = body.Body.stkCallback.CallbackMetadata?.Item?.find(
-    (item: any) => item.Name === "PhoneNumber"
+    (item: CallbackItem) =>
+      item.Name === "PhoneNumber" || item.Name === "MSISDN" || item.Name === "Phone"
   )?.Value;
 
   if (resultCode === 0) {

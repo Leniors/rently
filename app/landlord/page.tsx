@@ -42,15 +42,18 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Plus, Edit, Trash2, Building2, X, AlertCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { Database } from "@/integrations/supabase/types";
 import { useToast } from "@/hooks/use-toast";
+
+type Property = Database["public"]["Tables"]["properties"]["Row"];
 
 export default function LandlordDashboard() {
   const router = useRouter(); // ✅ replaces useNavigate
   const { toast } = useToast();
-  const [properties, setProperties] = useState<any[]>([]);
+  const [properties, setProperties] = useState<Property[]>([]);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
-  const [editingProperty, setEditingProperty] = useState<any>(null);
+  const [editingProperty, setEditingProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(false);
   const [uploadingImages, setUploadingImages] = useState(false);
   const [formData, setFormData] = useState({
@@ -175,7 +178,7 @@ export default function LandlordDashboard() {
 
     const { data: property, error } = await supabase
       .from("properties")
-      .insert(payload as any)
+      .insert(payload as Property)
       .select()
       .single();
 
@@ -217,7 +220,7 @@ export default function LandlordDashboard() {
   };
 
   // (keep your handleEdit, handleUpdate, handleDelete, handleStatusChange same as before)
-  const handleEdit = (property: any) => {
+  const handleEdit = (property: Property) => {
     setEditingProperty(property);
     setFormData({
       title: property.title,
@@ -254,15 +257,15 @@ export default function LandlordDashboard() {
       allImages = [...allImages, ...newImageUrls];
     }
 
-    const updateData: any = {
+    const updateData: Partial<Property> = {
       title: formData.title,
       description: formData.description,
-      property_type: formData.property_type as any,
+      property_type: formData.property_type as Property["property_type"],
       price: parseFloat(formData.price),
       location: formData.location,
-      bedrooms: formData.bedrooms ? parseInt(formData.bedrooms) : undefined,
-      bathrooms: formData.bathrooms ? parseInt(formData.bathrooms) : undefined,
-      area_sqft: formData.area_sqft ? parseInt(formData.area_sqft) : undefined,
+      bedrooms: formData.bedrooms ? parseInt(formData.bedrooms) : null,
+      bathrooms: formData.bathrooms ? parseInt(formData.bathrooms) : null,
+      area_sqft: formData.area_sqft ? parseInt(formData.area_sqft) : null,
       images: allImages,
     };
 
